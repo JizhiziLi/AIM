@@ -5,7 +5,6 @@
 <a href=""><img  src="https://img.shields.io/badge/license-MIT-blue"></a>
 </p>
 
-
 <h4 align="center">This is the official repository of the paper <a href="https://arxiv.org/abs/2107.07235">Deep Automatic Natural Image Matting</a>.</h4>
 
 <p align="center">
@@ -19,7 +18,6 @@
 
 ***
 ><h3><strong><i>📆 News</i></strong></h3>
-<!-- > -->
 > The training code, inference code and the pretrained models will be released soon. 
 > 
 > [2021-07-16]: Publish the validation dataset [AIM-500](https://drive.google.com/drive/folders/1IyPiYJUp-KtOoa-Hsm922VU3aCcidjjz?usp=sharing). Please follow the `readme.txt` for details.
@@ -63,13 +61,11 @@ We propose <strong>AIM-500</strong> (Automatic Image Matting-500), the first nat
 
 ![](demo/aim500.jpg)
 
-
 ## Results
 
 We test our network on different types of images in AIM-500 and compare with previous SOTA methods, the results are shown below.
 
 ![](demo/exp.jpg)
-
 
 ## Statement
 
