@@ -6,3 +6,6 @@
 tensorboard/*
 *.weights
 *.json
+core/data/*
+core/temp.py
+*.tar
