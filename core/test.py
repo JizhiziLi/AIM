@@ -17,7 +17,7 @@ import json
 
 def get_args():
 	# Statement of args
-	# --cude: use cude or not
+	# --cuda: use cuda or not
 	# --deploy: deploy flag
 	# --model_path: pretrained model path
 	# --test_choice: [HYBRID/RESIZE] test strategy choices
@@ -38,8 +38,9 @@ def get_args():
 
 
 def inference_once(args, model, scale_img, scale_trimap=None):
-	pred_list = []
-	tensor_img = torch.from_numpy(scale_img.astype(np.float32)[:, :, :]).permute(2, 0, 1).cuda()
+	tensor_img = torch.from_numpy(scale_img.astype(np.float32)[:, :, :]).permute(2, 0, 1)
+	if args.cuda:
+		tensor_img = tensor_img.cuda()
 	input_t = tensor_img
 	input_t = input_t/255.0
 	normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -73,7 +74,7 @@ def inference_img(args, model, img):
 		new_w = min(MAX_SIZE_W, resize_w - (resize_w % 32))
 
 		scale_img = resize(img,(new_h,new_w))*255.0
-		pred_coutour_1, pred_retouching_1, pred_fusion_1 = inference_once(args, model, scale_img)
+		pred_coutour_1, _, _ = inference_once(args, model, scale_img)
 		pred_coutour_1 = resize(pred_coutour_1,(h,w))*255.0
 
 		resize_h = int(h*local_ratio)
@@ -81,7 +82,7 @@ def inference_img(args, model, img):
 		new_h = min(MAX_SIZE_H, resize_h - (resize_h % 32))
 		new_w = min(MAX_SIZE_W, resize_w - (resize_w % 32))
 		scale_img = resize(img,(new_h,new_w))*255.0
-		pred_coutour_2, pred_retouching_2, pred_fusion_2 = inference_once(args, model, scale_img)		
+		_, pred_retouching_2, _ = inference_once(args, model, scale_img)		
 		pred_retouching_2 = resize(pred_retouching_2,(h,w))
 		
 		pred_fusion = get_masked_local_from_global_test(pred_coutour_1, pred_retouching_2)
@@ -185,7 +186,8 @@ def test_aim500(args, model):
 		alpha = alpha[:,:,0] if alpha.ndim>2 else alpha
 
 		with torch.no_grad():
-			torch.cuda.empty_cache()
+			if args.cuda:
+				torch.cuda.empty_cache()
 			predict = inference_img(args, model, img)
 			sad_trimap_diff, mse_trimap_diff, mad_trimap_diff = calculate_sad_mse_mad(predict, alpha, trimap)
 			sad_diff, mse_diff, mad_diff = calculate_sad_mse_mad_whole_img(predict, alpha)
