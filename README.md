@@ -4,7 +4,7 @@
 <a href="https://arxiv.org/abs/2107.07235"><img  src="https://img.shields.io/badge/arXiv-Paper-<COLOR>.svg" ></a>
 <a href=""><img  src="https://img.shields.io/badge/license-MIT-blue"></a>
 <a href="https://www.ijcai.org/proceedings/2021/111"><img  src="https://img.shields.io/static/v1?label=inproceedings&message=Paper&color=orange"></a>
-
+<a href="https://paperswithcode.com/sota/image-matting-on-aim-500?p=deep-automatic-natural-image-matting"><img src="https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/deep-automatic-natural-image-matting/image-matting-on-aim-500"></a>
 </p>
 
 
@@ -300,7 +300,7 @@ This project is under the MIT license. For further questions, please contact <st
 
 ## Relevant Projects
 
-[1] <strong>End-to-end Animal Image Matting, arxiv, 2020</strong> | [Paper](https://arxiv.org/pdf/2010.16188v1.pdf) | [Github](https://github.com/JizhiziLi/animal-matting)
+[1] <strong>Bridging Composite and Real: Towards End-to-end Deep Image Mattin, IJCV, 2021g</strong> | [Paper](https://arxiv.org/pdf/2010.16188v1.pdf) | [Github](https://github.com/JizhiziLi/GFM)
 <br><em>&ensp; &ensp; &ensp;Jizhizi Li, Jing Zhang, Stephen J. Maybank, Dacheng Tao</em>
 
 [2] <strong>Privacy-Preserving Portrait Matting, ACM MM, 2021</strong> | [Paper](https://arxiv.org/pdf/2104.14222.pdf) | [Github](https://github.com/JizhiziLi/P3M)

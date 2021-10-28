@@ -39,7 +39,12 @@ def get_args():
 
 def inference_once(args, model, scale_img, scale_trimap=None):
 	pred_list = []
-	tensor_img = torch.from_numpy(scale_img.astype(np.float32)[:, :, :]).permute(2, 0, 1).cuda()
+
+	if args.cuda:
+		tensor_img = torch.from_numpy(scale_img.astype(np.float32)[:, :, :]).permute(2, 0, 1).cuda()
+	else:
+		tensor_img = torch.from_numpy(scale_img.astype(np.float32)[:, :, :]).permute(2, 0, 1)
+
 	input_t = tensor_img
 	input_t = input_t/255.0
 	normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -185,7 +190,8 @@ def test_aim500(args, model):
 		alpha = alpha[:,:,0] if alpha.ndim>2 else alpha
 
 		with torch.no_grad():
-			torch.cuda.empty_cache()
+			if args.cuda:
+				torch.cuda.empty_cache()
 			predict = inference_img(args, model, img)
 			sad_trimap_diff, mse_trimap_diff, mad_trimap_diff = calculate_sad_mse_mad(predict, alpha, trimap)
 			sad_diff, mse_diff, mad_diff = calculate_sad_mse_mad_whole_img(predict, alpha)
@@ -288,7 +294,7 @@ def load_model_and_deploy(args):
 	print(f'Test stategy: {args.test_choice}')
 	print(f'Test dataset: {args.dataset_choice}')	
 	model = AimNet()
-
+	
 	if torch.cuda.device_count()==0:
 		print(f'Running on CPU...')
 		args.cuda = False
