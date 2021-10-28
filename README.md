@@ -85,9 +85,10 @@ We test our network on different types of images in AIM-500 and compare with pre
 ## Installation
 Requirements:
 
-- Python 3.6.5+ with Numpy and scikit-image
-- Pytorch (version 1.4.0)
-- Torchvision (version 0.5.0)
+- Python 3.7.7+ with Numpy and scikit-image
+- Pytorch (version>=1.7.1)
+- Torchvision (version 0.8.2)
+- Scikit-image (version 0.14.5)
 
 1. Clone this repository and go into the repository
 
@@ -97,7 +98,7 @@ Requirements:
 
 2. Create conda environment and activate
 
-    `conda create -n aim python=3.6.5`
+    `conda create -n aim python=3.7.7`
 
     `conda activate aim`
 
@@ -105,9 +106,9 @@ Requirements:
 
     `pip install -r requirements.txt`
 
-    `conda install pytorch==1.4.0 torchvision==0.5.0 cudatoolkit=10.1 -c pytorch`
+    `conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=10.2 -c pytorch`
 
-Our code has been tested with Python 3.6.5, Pytorch 1.4.0, Torchvision 0.5.0, CUDA 10.1 on Ubuntu 18.04.
+Our code has been tested with Python 3.7.7, Pytorch 1.7.1, Torchvision 0.8.2, CUDA 10.2 on Ubuntu 18.04.
 
 
 ## Inference Code 
