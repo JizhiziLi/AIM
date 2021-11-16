@@ -1,7 +1,13 @@
-from config import *
-from util import *
-from evaluate import *
+"""
+Deep Automatic Natural Image Matting [IJCAI-21]
+Main test file.
 
+Copyright (c) 2021, Jizhizi Li (jili8515@uni.sydney.edu.au)
+Licensed under the MIT License (see LICENSE for details)
+Github repo: https://github.com/JizhiziLi/AIM
+Paper link : https://www.ijcai.org/proceedings/2021/111
+
+"""
 import torch
 import cv2
 import argparse
@@ -9,10 +15,14 @@ import numpy as np
 from tqdm import tqdm
 from PIL import Image
 from skimage.transform import resize
-from network.AimNet import AimNet
 from torchvision import transforms
 import logging
 import json
+
+from config import *
+from util import *
+from evaluate import *
+from network.AimNet import AimNet
 
 
 def get_args():
@@ -113,9 +123,9 @@ def test_aim500(args, model):
 	############################
 	# Some initial setting for paths
 	############################
-	ORIGINAL_PATH = DATASET_PATHS_DICT['AIM_TEST']['ORIGINAL_PATH']
-	MASK_PATH = DATASET_PATHS_DICT['AIM_TEST']['MASK_PATH']
-	TRIMAP_PATH = DATASET_PATHS_DICT['AIM_TEST']['TRIMAP_PATH']
+	ORIGINAL_PATH = DATASET_PATHS_DICT['AIM']['TEST']['ORIGINAL_PATH']
+	MASK_PATH = DATASET_PATHS_DICT['AIM']['TEST']['MASK_PATH']
+	TRIMAP_PATH = DATASET_PATHS_DICT['AIM']['TEST']['TRIMAP_PATH']
 
 	#############################
 	# For AIM-500 validation set
@@ -151,7 +161,6 @@ def test_aim500(args, model):
 	sad_bg_diffs = 0.
 	conn_diffs = 0.
 	grad_diffs = 0.
-
 
 	if not args.deploy:
 		writer = args.writer
