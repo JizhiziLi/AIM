@@ -11,33 +11,17 @@ Paper link : https://www.ijcai.org/proceedings/2021/111
 
 ##############################################################
 # Some roots
-# REPOSITORY_ROOT_PATH = '/Users/jizhizili/Desktop/USYD/code/matting/AIM/'
-# DUTS_DATASET_ROOT_PATH = ''
-# DIM_DATASET_ROOT_PATH = ''
-# HATT_DATASET_ROOT_PATH = '/Users/jizhizili/Desktop/USYD/DATASET/MATTING/OTHERS/dataset/HATT/'
-# AM2K_DATASET_ROOT_PATH = '/Users/jizhizili/Desktop/USYD/DATASET/MATTING/AM-2k/'
-# BG20K_DATASET_ROOT_PATH = ''
-# AIM_DATASET_ROOT_PATH = ''
-# HATT_DIM_TYPE_JSON = REPOSITORY_ROOT_PATH+'dataset/dim_hatt_type.json'
-
-
-
-# REPOSITORY_ROOT_PATH = '/Users/jizhizili/Desktop/USYD/code/matting/AIM/'
-REPOSITORY_ROOT_PATH = '/project/mattinge2e/AIM/'
-DUTS_DATASET_ROOT_PATH = '/project/imagematting/dataset/SOD/'
-DIM_DATASET_ROOT_PATH = '/project/imagematting/dataset/dimDataset/'
-HATT_DATASET_ROOT_PATH = '/project/imagematting/dataset/hattDataset/'
-AM2K_DATASET_ROOT_PATH = '/project/imagematting/dataset/AM-2k/'
-BG20K_DATASET_ROOT_PATH = '/project/imagematting/dataset/hqbgDataset/'
-AIM_DATASET_ROOT_PATH = '/Users/jizhizili/Desktop/USYD/DATASET/MATTING/AIM-500/'
-HATT_DIM_TYPE_JSON = REPOSITORY_ROOT_PATH+'dataset/dim_hatt_am2k_type.json'
-
-
-
+REPOSITORY_ROOT_PATH = ''
+DUTS_DATASET_ROOT_PATH = ''
+DIM_DATASET_ROOT_PATH = ''
+HATT_DATASET_ROOT_PATH = ''
+AM2K_DATASET_ROOT_PATH = ''
+BG20K_DATASET_ROOT_PATH = ''
+AIM_DATASET_ROOT_PATH = ''
+HATT_DIM_TYPE_JSON = REPOSITORY_ROOT_PATH+'dataset/dim_hatt_type.json'
 
 TRAIN_LOGS_FOLDER = REPOSITORY_ROOT_PATH+'logs/train_logs/'
 TEST_LOGS_FOLDER = REPOSITORY_ROOT_PATH+'logs/test_logs/'
-
 
 ######### Path of dataset related ######### 
 DATASET_PATHS_DICT={

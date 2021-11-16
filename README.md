@@ -83,7 +83,6 @@ We propose <strong>AIM-500</strong> (Automatic Image Matting-500), the first nat
 
 
 
-
 ## Results on AIM-500
 
 We test our network on different types of images in AIM-500 and compare with previous SOTA methods, the results are shown below. The code for testing and evaluating on AIM-500 can be checked in this [code-base page](https://github.com/JizhiziLi/AIM/tree/master/core).
@@ -114,17 +113,6 @@ We show some sample images from the internet, the predicted alpha mattes, and th
 
 <img src="samples/original/1.jpg" width="33%"><img src="samples/result_alpha/1.png" width="33%"><img src="samples/result_color/1.png" width="33%"><img src="samples/original/2.jpg" width="33%"><img src="samples/result_alpha/2.png" width="33%"><img src="samples/result_color/2.png" width="33%"><img src="samples/original/3.jpg" width="33%"><img src="samples/result_alpha/3.png" width="33%"><img src="samples/result_color/3.png" width="33%">
 
-<!-- ## Training Code 
-
-Here we provide the procedure of training our network on available matting datasets
-
-
-The matting datasets used in this project can be refer to:
-
-- DIM: please contact the authors of Deep Image Matting for request
-- HATT: please refer to https://github.com/yuhaoliu7456/CVPR2020-HAttMatting for request
-- AM-2k: please refer to https://github.com/JizhiziLi/animal-matting for request
-- BG-20k:  please refer to https://github.com/JizhiziLi/animal-matting for request  -->
 
 ## Statement
 

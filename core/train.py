@@ -130,8 +130,7 @@ def save_last_checkpoint(args, model):
 def main():
 	args = get_args()
 	now = datetime.datetime.now()
-	# logging_filename = 'logs/train_logs/'+args.logname+'_'+now.strftime("%Y-%m-%d-%H:%M")+'.log'
-	logging_filename = 'logs/train_logs/debug.log'
+	logging_filename = 'logs/train_logs/'+args.logname+'_'+now.strftime("%Y-%m-%d-%H:%M")+'.log'
 	print(f'===> Logging to {logging_filename}') 
 	logging.basicConfig(filename=logging_filename, level=logging.INFO)
 	args.logging = logging

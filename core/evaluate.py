@@ -1,3 +1,13 @@
+"""
+Deep Automatic Natural Image Matting [IJCAI-21]
+Utilization file.
+
+Copyright (c) 2021, Jizhizi Li (jili8515@uni.sydney.edu.au)
+Licensed under the MIT License (see LICENSE for details)
+Github repo: https://github.com/JizhiziLi/AIM
+Paper link : https://www.ijcai.org/proceedings/2021/111
+
+"""
 import numpy as np
 import torch
 import torch.nn as nn
