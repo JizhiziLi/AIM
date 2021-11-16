@@ -21,8 +21,8 @@
   <a href="#network-aimnet">Network</a> |
   <a href="#aim-500">AIM-500</a> |
   <a href="#results">Results</a> |
-  <a href="#https://github.com/JizhiziLi/AIM/tree/master/core">Train and Test</a> |
-  <a href="#inference-code---how-to-test-on-your-images">Inference code</a> |
+  <a href="https://github.com/JizhiziLi/AIM/tree/master/core">Train and Test</a> |
+  <a href="#inference-code-how-to-test-on-your-images">Inference code</a> |
   <a href="#statement">Statement</a>
 </p>
 
@@ -31,7 +31,7 @@
 > 
 > [2021-11-17]: Release the code for training and dataset processing in this [code-base page](https://github.com/JizhiziLi/AIM/tree/master/core).
 >
-> [2021-10-02]: Publish the network, the inference code and the pretrained models in this [code-base page](https://github.com/JizhiziLi/AIM/tree/master/core).
+> [2021-10-02]: Publish the network, the [inference code](#inference-code-how-to-test-on-your-images) and the pretrained models in this [code-base page](https://github.com/JizhiziLi/AIM/tree/master/core).
 >
 > [2021-07-16]: Publish the validation dataset [AIM-500](#aim-500). Please follow the `readme.txt` for details.
 >
