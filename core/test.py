@@ -28,7 +28,6 @@ from network.AimNet import AimNet
 def get_args():
 	# Statement of args
 	# --cude: use cude or not
-	# --deploy: deploy flag
 	# --model_path: pretrained model path
 	# --test_choice: [HYBRID/RESIZE] test strategy choices
 	# --dataset_choice: [AIM_500/SAMPLES] test dataset choices
@@ -37,7 +36,6 @@ def get_args():
 
 	parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 	parser.add_argument('--cuda', action='store_true', help='use cuda?')
-	parser.add_argument('--deploy', action='store_true', help='use for deploy mode')
 	parser.add_argument('--model_path', type=str, default='', required=False, help="path of model to use")
 	parser.add_argument('--test_choice', type=str, required=True, choices=['RESIZE','HYBRID'], help="which dataset to test")
 	parser.add_argument('--dataset_choice', type=str, required=True, choices=['AIM_500','SAMPLES'], help="which dataset to test")
@@ -162,9 +160,6 @@ def test_aim500(args, model):
 	conn_diffs = 0.
 	grad_diffs = 0.
 
-	if not args.deploy:
-		writer = args.writer
-		epoch = args.epoch
 	test_result_dir_so = args.test_result_dir+'SO/'
 	test_result_dir_stm = args.test_result_dir+'STM/'
 	test_result_dir_ns = args.test_result_dir+'NS/'
@@ -327,7 +322,3 @@ def load_model_and_deploy(args):
 	else:
 		print('Please input the correct dataset_choice (SAMPLES or AIM_500).')
 
-
-if __name__ == '__main__':
-	args = get_args()
-	load_model_and_deploy(args)

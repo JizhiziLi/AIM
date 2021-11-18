@@ -20,7 +20,7 @@
   <a href="#introduction">Introduction</a> |
   <a href="#network-aimnet">Network</a> |
   <a href="#aim-500">AIM-500</a> |
-  <a href="#results">Results</a> |
+  <a href="#results-on-aim-500">Results</a> |
   <a href="https://github.com/JizhiziLi/AIM/tree/master/core">Train and Test</a> |
   <a href="#inference-code-how-to-test-on-your-images">Inference code</a> |
   <a href="#statement">Statement</a>
