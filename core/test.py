@@ -167,10 +167,6 @@ def test_aim500(args, model):
 	refresh_folder(test_result_dir_stm)
 	refresh_folder(test_result_dir_ns)
 
-	############################
-	# Start testing
-	############################
-
 	model.eval()
 	img_list = listdir_nohidden(ORIGINAL_PATH)
 
@@ -218,7 +214,6 @@ def test_aim500(args, model):
 
 			aim_category_sad_dict[img_category].append(sad_diff)
 			aim_type_sad_dict[img_type].append(sad_diff)
-
 
 			if img_type=='SO':
 				save_test_result(os.path.join(test_result_dir_so, extract_pure_name(img_name)+'.png'),predict)
@@ -322,3 +317,6 @@ def load_model_and_deploy(args):
 	else:
 		print('Please input the correct dataset_choice (SAMPLES or AIM_500).')
 
+if __name__ == '__main__':
+	args = get_args()
+	load_model_and_deploy(args)
