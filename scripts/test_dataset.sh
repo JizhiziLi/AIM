@@ -9,7 +9,7 @@
 dataset_choice='AIM_500'
 test_choice='HYBRID'
 model_path='models/pretrained/aimnet_pretrained_matting.pth'
-nickname=DEBUG
+nickname=test_on_aim500
 
 python core/test.py \
      --cuda \
@@ -18,4 +18,3 @@ python core/test.py \
      --test_choice=$test_choice \
      --test_result_dir=result/$nickname/ \
      --logname=$nickname \
-     --deploy \

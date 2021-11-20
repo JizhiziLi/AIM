@@ -1,9 +1,116 @@
+"""
+Deep Automatic Natural Image Matting [IJCAI-21]
+Utilization file.
+
+Copyright (c) 2021, Jizhizi Li (jili8515@uni.sydney.edu.au)
+Licensed under the MIT License (see LICENSE for details)
+Github repo: https://github.com/JizhiziLi/AIM
+Paper link : https://www.ijcai.org/proceedings/2021/111
+
+"""
 import numpy as np
 import torch
 import torch.nn as nn
 import math
 from torch.autograd import Variable
 import torch.nn.functional as fnn
+
+
+##########################
+### Training loses for GFM
+##########################
+def get_crossentropy_loss(gt,pre):	
+	gt_copy = gt.clone()
+	gt_copy[gt_copy==0] = 0
+	gt_copy[gt_copy==255] = 2
+	gt_copy[gt_copy>2] = 1
+	gt_copy = gt_copy.long()
+	gt_copy = gt_copy[:,0,:,:]
+	criterion = nn.CrossEntropyLoss()
+	entropy_loss = criterion(pre, gt_copy)
+	return entropy_loss
+
+def get_alpha_loss(predict, alpha, trimap):
+	weighted = torch.zeros(trimap.shape).cuda()
+	weighted[trimap == 128] = 1.
+	alpha_f = alpha / 255.
+	alpha_f = alpha_f.cuda()
+	diff = predict - alpha_f
+	diff = diff * weighted
+	alpha_loss = torch.sqrt(diff ** 2 + 1e-12)
+	alpha_loss_weighted = alpha_loss.sum() / (weighted.sum() + 1.)
+	return alpha_loss_weighted
+
+def get_alpha_loss_whole_img(predict, alpha):
+	weighted = torch.ones(alpha.shape).cuda()
+	alpha_f = alpha / 255.
+	alpha_f = alpha_f.cuda()
+	diff = predict - alpha_f
+	alpha_loss = torch.sqrt(diff ** 2 + 1e-12)
+	alpha_loss = alpha_loss.sum()/(weighted.sum())
+	return alpha_loss
+
+## Laplacian loss is refer to 
+## https://gist.github.com/MarcoForte/a07c40a2b721739bb5c5987671aa5270
+def build_gauss_kernel(size=5, sigma=1.0, n_channels=1, cuda=False):
+	if size % 2 != 1:
+		raise ValueError("kernel size must be uneven")
+	grid = np.float32(np.mgrid[0:size,0:size].T)
+	gaussian = lambda x: np.exp((x - size//2)**2/(-2*sigma**2))**2
+	kernel = np.sum(gaussian(grid), axis=2)
+	kernel /= np.sum(kernel)
+	kernel = np.tile(kernel, (n_channels, 1, 1))
+	kernel = torch.FloatTensor(kernel[:, None, :, :]).cuda()
+	return Variable(kernel, requires_grad=False)
+
+def conv_gauss(img, kernel):
+	""" convolve img with a gaussian kernel that has been built with build_gauss_kernel """
+	n_channels, _, kw, kh = kernel.shape
+	img = fnn.pad(img, (kw//2, kh//2, kw//2, kh//2), mode='replicate')
+	return fnn.conv2d(img, kernel, groups=n_channels)
+
+def laplacian_pyramid(img, kernel, max_levels=5):
+	current = img
+	pyr = []
+	for level in range(max_levels):
+		filtered = conv_gauss(current, kernel)
+		diff = current - filtered
+		pyr.append(diff)
+		current = fnn.avg_pool2d(filtered, 2)
+	pyr.append(current)
+	return pyr
+
+def get_laplacian_loss(predict, alpha, trimap):
+	weighted = torch.zeros(trimap.shape).cuda()
+	weighted[trimap == 128] = 1.
+	alpha_f = alpha / 255.
+	alpha_f = alpha_f.cuda()
+	alpha_f = alpha_f.clone()*weighted
+	predict = predict.clone()*weighted
+	gauss_kernel = build_gauss_kernel(size=5, sigma=1.0, n_channels=1, cuda=True)
+	pyr_alpha  = laplacian_pyramid(alpha_f, gauss_kernel, 5)
+	pyr_predict = laplacian_pyramid(predict, gauss_kernel, 5)
+	laplacian_loss_weighted = sum(fnn.l1_loss(a, b) for a, b in zip(pyr_alpha, pyr_predict))
+	return laplacian_loss_weighted
+
+def get_laplacian_loss_whole_img(predict, alpha):
+	alpha_f = alpha / 255.
+	alpha_f = alpha_f.cuda()
+	gauss_kernel = build_gauss_kernel(size=5, sigma=1.0, n_channels=1, cuda=True)
+	pyr_alpha  = laplacian_pyramid(alpha_f, gauss_kernel, 5)
+	pyr_predict = laplacian_pyramid(predict, gauss_kernel, 5)
+	laplacian_loss = sum(fnn.l1_loss(a, b) for a, b in zip(pyr_alpha, pyr_predict))
+	return laplacian_loss
+
+def get_composition_loss_whole_img(img, alpha, fg, bg, predict):
+	weighted = torch.ones(alpha.shape).cuda()
+	predict_3 = torch.cat((predict, predict, predict), 1)
+	comp = predict_3 * fg + (1. - predict_3) * bg
+	comp_loss = torch.sqrt((comp - img) ** 2 + 1e-12) / 255.
+	comp_loss = comp_loss.sum()/(weighted.sum())
+	return comp_loss
+
+
 
 ######### Testing loss calculation for MATTING Network#########
 def calculate_sad_mse_mad(predict_old,alpha,trimap):

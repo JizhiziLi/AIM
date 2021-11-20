@@ -1,7 +1,13 @@
-from config import *
-from util import *
-from evaluate import *
+"""
+Deep Automatic Natural Image Matting [IJCAI-21]
+Main test file.
 
+Copyright (c) 2021, Jizhizi Li (jili8515@uni.sydney.edu.au)
+Licensed under the MIT License (see LICENSE for details)
+Github repo: https://github.com/JizhiziLi/AIM
+Paper link : https://www.ijcai.org/proceedings/2021/111
+
+"""
 import torch
 import cv2
 import argparse
@@ -9,16 +15,19 @@ import numpy as np
 from tqdm import tqdm
 from PIL import Image
 from skimage.transform import resize
-from network.AimNet import AimNet
 from torchvision import transforms
 import logging
 import json
 
+from config import *
+from util import *
+from evaluate import *
+from network.AimNet import AimNet
+
 
 def get_args():
 	# Statement of args
-	# --cuda: use cuda or not
-	# --deploy: deploy flag
+	# --cude: use cude or not
 	# --model_path: pretrained model path
 	# --test_choice: [HYBRID/RESIZE] test strategy choices
 	# --dataset_choice: [AIM_500/SAMPLES] test dataset choices
@@ -27,7 +36,6 @@ def get_args():
 
 	parser = argparse.ArgumentParser(description='PyTorch Super Res Example')
 	parser.add_argument('--cuda', action='store_true', help='use cuda?')
-	parser.add_argument('--deploy', action='store_true', help='use for deploy mode')
 	parser.add_argument('--model_path', type=str, default='', required=False, help="path of model to use")
 	parser.add_argument('--test_choice', type=str, required=True, choices=['RESIZE','HYBRID'], help="which dataset to test")
 	parser.add_argument('--dataset_choice', type=str, required=True, choices=['AIM_500','SAMPLES'], help="which dataset to test")
@@ -38,9 +46,13 @@ def get_args():
 
 
 def inference_once(args, model, scale_img, scale_trimap=None):
-	tensor_img = torch.from_numpy(scale_img.astype(np.float32)[:, :, :]).permute(2, 0, 1)
+	pred_list = []
+
 	if args.cuda:
-		tensor_img = tensor_img.cuda()
+		tensor_img = torch.from_numpy(scale_img.astype(np.float32)[:, :, :]).permute(2, 0, 1).cuda()
+	else:
+		tensor_img = torch.from_numpy(scale_img.astype(np.float32)[:, :, :]).permute(2, 0, 1)
+
 	input_t = tensor_img
 	input_t = input_t/255.0
 	normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -109,9 +121,9 @@ def test_aim500(args, model):
 	############################
 	# Some initial setting for paths
 	############################
-	ORIGINAL_PATH = DATASET_PATHS_DICT['AIM_TEST']['ORIGINAL_PATH']
-	MASK_PATH = DATASET_PATHS_DICT['AIM_TEST']['MASK_PATH']
-	TRIMAP_PATH = DATASET_PATHS_DICT['AIM_TEST']['TRIMAP_PATH']
+	ORIGINAL_PATH = DATASET_PATHS_DICT['AIM']['TEST']['ORIGINAL_PATH']
+	MASK_PATH = DATASET_PATHS_DICT['AIM']['TEST']['MASK_PATH']
+	TRIMAP_PATH = DATASET_PATHS_DICT['AIM']['TEST']['TRIMAP_PATH']
 
 	#############################
 	# For AIM-500 validation set
@@ -148,10 +160,6 @@ def test_aim500(args, model):
 	conn_diffs = 0.
 	grad_diffs = 0.
 
-
-	if not args.deploy:
-		writer = args.writer
-		epoch = args.epoch
 	test_result_dir_so = args.test_result_dir+'SO/'
 	test_result_dir_stm = args.test_result_dir+'STM/'
 	test_result_dir_ns = args.test_result_dir+'NS/'
@@ -290,7 +298,7 @@ def load_model_and_deploy(args):
 	print(f'Test stategy: {args.test_choice}')
 	print(f'Test dataset: {args.dataset_choice}')	
 	model = AimNet()
-
+	
 	if torch.cuda.device_count()==0:
 		print(f'Running on CPU...')
 		args.cuda = False
@@ -314,7 +322,3 @@ def load_model_and_deploy(args):
 	else:
 		print('Please input the correct dataset_choice (SAMPLES or AIM_500).')
 
-
-if __name__ == '__main__':
-	args = get_args()
-	load_model_and_deploy(args)

@@ -9,3 +9,4 @@ tensorboard/*
 core/data/*
 core/temp.py
 *.tar
+samples/*
