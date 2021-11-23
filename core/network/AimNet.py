@@ -48,56 +48,37 @@ class PSPModule(nn.Module):
         bottle = self.bottleneck(torch.cat(priors, 1))
         return self.relu(bottle)
 
-
-
 class AimNet(nn.Module):
-
     def __init__(self):
         super().__init__()
         self.resnet = resnet34_mp()
-
         ##########################
         ### Encoder part - RESNET
         ##########################
-        #stage 0
         self.encoder0 = nn.Sequential(
             self.resnet.conv1,
             self.resnet.bn1,
             self.resnet.relu,
             )
-
         self.mp0 = self.resnet.maxpool1
-
-        #stage 1
         self.encoder1 = nn.Sequential(
-            # self.resnet.maxpool,
             self.resnet.layer1
             )
-
         self.mp1 = self.resnet.maxpool2
-        
-        #stage 2
         self.encoder2 = self.resnet.layer2
-
         self.mp2 = self.resnet.maxpool3
-        #stage 3
         self.encoder3 = self.resnet.layer3
         self.mp3 = self.resnet.maxpool4
-        #stage 4
         self.encoder4 = self.resnet.layer4
         self.mp4 = self.resnet.maxpool5
-
         ##########################
         ### Decoder part - GLOBAL
         ##########################
-        ###psp: N, 512, 1/32, 1/32
         self.psp_module = PSPModule(512, 512, (1, 3, 5))
         self.psp4 = conv_up_psp(512, 256, 2)
         self.psp3 = conv_up_psp(512, 128, 4)
         self.psp2 = conv_up_psp(512, 64, 8)
         self.psp1 = conv_up_psp(512, 64, 16)
-
-        #stage 4d
         self.decoder4_g = nn.Sequential(
             nn.Conv2d(1024,512,3,padding=1),
             nn.BatchNorm2d(512),
@@ -110,8 +91,6 @@ class AimNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.Upsample(scale_factor=2, mode='bilinear') )
         self.decoder4_g_se = SELayer(256)
-
-        #stage 3d
         self.decoder3_g = nn.Sequential(
             nn.Conv2d(512,256,3,padding=1),
             nn.BatchNorm2d(256),
@@ -124,8 +103,6 @@ class AimNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.Upsample(scale_factor=2, mode='bilinear') )
         self.decoder3_g_se = SELayer(128)
-        
-        #stage 2d
         self.decoder2_g = nn.Sequential(
             nn.Conv2d(256,128,3,padding=1),
             nn.BatchNorm2d(128),
@@ -138,8 +115,6 @@ class AimNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.Upsample(scale_factor=2, mode='bilinear'))
         self.decoder2_g_se = SELayer(64)
-
-        #stage 1d
         self.decoder1_g = nn.Sequential(
             nn.Conv2d(128,64,3,padding=1),
             nn.BatchNorm2d(64),
@@ -152,8 +127,6 @@ class AimNet(nn.Module):
             nn.ReLU(inplace=True),
             nn.Upsample(scale_factor=2, mode='bilinear'))
         self.decoder1_g_se = SELayer(64)
-        
-        #stage 0d
         self.decoder0_g = nn.Sequential(
             nn.Conv2d(128,64,3,padding=1),
             nn.BatchNorm2d(64),
@@ -162,13 +135,9 @@ class AimNet(nn.Module):
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
             nn.Upsample(scale_factor=2, mode='bilinear'))
-
         self.decoder0_g_spatial = nn.Conv2d(2,1,7,padding=3)
         self.decoder0_g_se = SELayer(64)
-
         self.decoder_final_g = nn.Conv2d(64,3,3,padding=1)
-
-
         ##########################
         ### Decoder part - LOCAL
         ##########################
@@ -182,8 +151,6 @@ class AimNet(nn.Module):
             nn.Conv2d(512,512,3,dilation=2, padding=2),
             nn.BatchNorm2d(512),
             nn.ReLU(inplace=True))
-
-        #stage 4l
         self.decoder4_l = nn.Sequential(
             nn.Conv2d(1024,512,3,padding=1),
             nn.BatchNorm2d(512),
@@ -194,9 +161,6 @@ class AimNet(nn.Module):
             nn.Conv2d(512,256,3,padding=1),
             nn.BatchNorm2d(256),
             nn.ReLU(inplace=True))
-
-
-        #stage 3l
         self.decoder3_l = nn.Sequential(
             nn.Conv2d(512,256,3,padding=1),
             nn.BatchNorm2d(256),
@@ -207,9 +171,6 @@ class AimNet(nn.Module):
             nn.Conv2d(256,128,3,padding=1),
             nn.BatchNorm2d(128),
             nn.ReLU(inplace=True))
-
-        
-        #stage 2l
         self.decoder2_l = nn.Sequential(
             nn.Conv2d(256,128,3,padding=1),
             nn.BatchNorm2d(128),
@@ -220,9 +181,6 @@ class AimNet(nn.Module):
             nn.Conv2d(128,64,3,padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True))
-
-
-        #stage 1l
         self.decoder1_l = nn.Sequential(
             nn.Conv2d(128,64,3,padding=1),
             nn.BatchNorm2d(64),
@@ -233,9 +191,6 @@ class AimNet(nn.Module):
             nn.Conv2d(64,64,3,padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True))
-
-        
-        #stage 0l
         self.decoder0_l = nn.Sequential(
             nn.Conv2d(128,64,3,padding=1),
             nn.BatchNorm2d(64),
@@ -246,8 +201,6 @@ class AimNet(nn.Module):
 
         self.decoder_final_l = nn.Conv2d(64,1,3,padding=1)
 
-
-
         
     def forward(self, input):
 
@@ -255,95 +208,55 @@ class AimNet(nn.Module):
         ### Encoder part - MODIFIED RESNET
         #####################################
         e0 = self.encoder0(input)
-        #e0: N, 64, H, W
         e0p, id0 = self.mp0(e0)
         e1p, id1 = self.mp1(e0p)
-        #e1p: N, 64, H/4, W/4
         e1 = self.encoder1(e1p)
-        #e1: N, 64, H/2, W/2
         e2p, id2 = self.mp2(e1)
-        #e2p: N, 64, H/8, W/8
         e2 = self.encoder2(e2p)
-        #e2: N, 128, H/4, W/4
         e3p, id3 = self.mp3(e2)
-        #e3p: N, 128, H/16, W/16
         e3 = self.encoder3(e3p)
-        #e3: N, 256, H/8, W/8
         e4p, id4 = self.mp4(e3)
-        #e4p: N, 256, H/32, W/32
         e4 = self.encoder4(e4p)
-        #e4p: N, 512, H/16, W/16
-
         #####################################
         ### Decoder part - GLOBAL: Semantic
         #####################################
-        
         psp = self.psp_module(e4)
-        #psp: N, 512, H/32, W/32
         d4_g = self.decoder4_g(torch.cat((psp,e4),1))
-        #d4_g: N, 256, H/16, W/16
         d4_g = self.decoder4_g_se(d4_g)
         d3_g = self.decoder3_g(torch.cat((self.psp4(psp),d4_g),1))
-        #d3_g: N, 128, H/8, W/8
         d3_g = self.decoder3_g_se(d3_g)
         d2_g = self.decoder2_g(torch.cat((self.psp3(psp),d3_g),1))
-        #d2_g: N, 64, H/4, W/4
         d2_g = self.decoder2_g_se(d2_g)
         d1_g = self.decoder1_g(torch.cat((self.psp2(psp),d2_g),1))
-        #d1_g: N, 64, H/2, W/2
         d1_g = self.decoder1_g_se(d1_g)
         d0_g = self.decoder0_g(torch.cat((self.psp1(psp),d1_g),1))
-        #d0_g: N, 64, H, W
-
-        ###### add a spatial attention
         d0_g_avg = torch.mean(d0_g, dim=1,keepdim=True)
         d0_g_max, _ = torch.max(d0_g, dim=1,keepdim=True)
         d0_g_cat = torch.cat([d0_g_avg, d0_g_max], dim=1)
         d0_g_spatial = self.decoder0_g_spatial(d0_g_cat)
         d0_g_spatial_sigmoid = F.sigmoid(d0_g_spatial)
-
         d0_g = self.decoder0_g_se(d0_g)
         d0_g = self.decoder_final_g(d0_g)
         global_sigmoid = F.sigmoid(d0_g)
-
-
         #####################################
         ### Decoder part - LOCAL: Matting
         #####################################
         bb = self.bridge_block(e4)
-        #bb: N, 512, H/32, W/32
         d4_l = self.decoder4_l(torch.cat((bb, e4),1))
-        #d4_l: N, 256, H/32, W/32
         d3_l = F.max_unpool2d(d4_l, id4, kernel_size=2, stride=2)
-        #d3_l: N, 256, H/16, W/16
         d3_l = self.decoder3_l(torch.cat((d3_l, e3),1))
-        #d3_l: N, 128, H/16, W/16
         d2_l = F.max_unpool2d(d3_l, id3, kernel_size=2, stride=2)
-        #d2_l: N, 128, H/8, W/8
         d2_l = self.decoder2_l(torch.cat((d2_l, e2),1))
-        #d2_l: N, 64, H/8, W/8
         d1_l  = F.max_unpool2d(d2_l, id2, kernel_size=2, stride=2)
-        #d1_l: N, 64, H/4, W/4
         d1_l = self.decoder1_l(torch.cat((d1_l, e1),1))
-        #d1_l: N, 64, H/4, W/4
         d0_l  = F.max_unpool2d(d1_l, id1, kernel_size=2, stride=2)
-        #d0_l: N, 64, H/2, W/2
         d0_l  = F.max_unpool2d(d0_l, id0, kernel_size=2, stride=2)
-        #d0_l: N, 64, H, W
         d0_l = self.decoder0_l(torch.cat((d0_l, e0),1))
-        #d0_l: N, 64, H, W
         d0_l = d0_l+d0_l*d0_g_spatial_sigmoid
         d0_l = self.decoder_final_l(d0_l)
-        #d1_l: N, 1, H, W
         local_sigmoid = F.sigmoid(d0_l)
-   
-
         ##########################
         ### Fusion net - G/L
         ##########################
-
         fusion_sigmoid = get_masked_local_from_global(global_sigmoid, local_sigmoid)
-        
-
         return global_sigmoid, local_sigmoid, fusion_sigmoid
-        

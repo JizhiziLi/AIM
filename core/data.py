@@ -112,10 +112,17 @@ class LoadDataset(torch.utils.data.Dataset):
 
 		if self.SOD_DATA:
 			[ori, mask, trimap] = argv_transform
+			ori = ori/255.0
+			normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+			ori = normalize(ori)
 			return ori, mask, trimap
 		else:
 			[ori, mask, usr, fg, bg] = argv_transform
-
+			ori = ori/255.0
+			normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+			ori = normalize(ori)
 			return ori, mask, usr, fg, bg
 
 	def __len__(self):

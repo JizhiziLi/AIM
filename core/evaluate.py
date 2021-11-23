@@ -17,7 +17,7 @@ import torch.nn.functional as fnn
 
 
 ##########################
-### Training loses for GFM
+### Training losses for AIM
 ##########################
 def get_crossentropy_loss(gt,pre):	
 	gt_copy = gt.clone()
@@ -110,9 +110,9 @@ def get_composition_loss_whole_img(img, alpha, fg, bg, predict):
 	comp_loss = comp_loss.sum()/(weighted.sum())
 	return comp_loss
 
-
-
-######### Testing loss calculation for MATTING Network#########
+##########################
+### Test loss
+##########################
 def calculate_sad_mse_mad(predict_old,alpha,trimap):
 	predict = np.copy(predict_old)
 	pixel = float((trimap == 128).sum())
