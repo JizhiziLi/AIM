@@ -106,7 +106,7 @@ def get_composition_loss_whole_img(img, alpha, fg, bg, predict):
 	weighted = torch.ones(alpha.shape).cuda()
 	predict_3 = torch.cat((predict, predict, predict), 1)
 	comp = predict_3 * fg + (1. - predict_3) * bg
-	comp_loss = torch.sqrt((comp - img) ** 2 + 1e-12) / 255.
+	comp_loss = torch.sqrt((comp - img) ** 2 + 1e-12)
 	comp_loss = comp_loss.sum()/(weighted.sum())
 	return comp_loss
 
