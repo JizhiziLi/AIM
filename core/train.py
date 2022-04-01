@@ -17,7 +17,7 @@ from torch.autograd import Variable
 from torch.utils.data import DataLoader
 import logging
 import numpy as np
-import datetime
+import datetime{}
 import time
 from config import *
 from util import *
@@ -77,10 +77,6 @@ def train(args, model, optimizer, train_loader, epoch):
 	args.logging.info("===============================")
 	for iteration, batch in enumerate(train_loader, 1):
 		torch.cuda.empty_cache()
-
-		if iteration>4:
-			return 0
-
 		batch_new = []
 		for item in batch:
 			item = item.cuda()
