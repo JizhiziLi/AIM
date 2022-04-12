@@ -86,7 +86,7 @@ def inference_img(args, model, img):
 		new_w = min(MAX_SIZE_W, resize_w - (resize_w % 32))
 
 		scale_img = resize(img,(new_h,new_w))*255.0
-		pred_coutour_1, pred_retouching_1, pred_fusion_1 = inference_once(args, model, scale_img)
+		pred_coutour_1, _, _ = inference_once(args, model, scale_img)
 		pred_coutour_1 = resize(pred_coutour_1,(h,w))*255.0
 
 		resize_h = int(h*local_ratio)
@@ -94,7 +94,7 @@ def inference_img(args, model, img):
 		new_h = min(MAX_SIZE_H, resize_h - (resize_h % 32))
 		new_w = min(MAX_SIZE_W, resize_w - (resize_w % 32))
 		scale_img = resize(img,(new_h,new_w))*255.0
-		pred_coutour_2, pred_retouching_2, pred_fusion_2 = inference_once(args, model, scale_img)		
+		_, pred_retouching_2, _ = inference_once(args, model, scale_img)		
 		pred_retouching_2 = resize(pred_retouching_2,(h,w))
 		
 		pred_fusion = get_masked_local_from_global_test(pred_coutour_1, pred_retouching_2)
